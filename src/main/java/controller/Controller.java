@@ -3,6 +3,8 @@ package controller;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -55,29 +57,22 @@ public class Controller extends HttpServlet {
 		HttpSession session = request.getSession();
 		
 		String action = request.getParameter("action");
-		String page = "";
+		Map<String, String> routes = new HashMap<>();
+		routes.put("signup", "/signup.jsp");
+		routes.put("login", "/login.jsp");
+		routes.put("about", "/about.jsp");
+		routes.put("signup", "/signup.jsp");
+		routes.put(null, "/index.jsp");
+		String page = routes.get(action) == null? "/error.jsp": routes.get(action);
 		
-		switch (action) {
-		case "signup":
-			page = "/signup.jsp";
-			break;
-		case "login":
-			page = "/login.jsp";
-			break;
-		case "logout":
+		if (action != null && action.equals("logout")) {
 			session.setAttribute("email", null);
 			page = "/index.jsp";
-			break;
-		case "about":
-			page = "/about.jsp";
-			break;
-		default:
-			page = "/error.jsp";
 		}
 		
 		if (session.getAttribute("email") != null &&
 				(page == "/login.jsp" || page == "/signup.jsp"))
-			response.sendRedirect(response.encodeURL(basePath));
+			request.getRequestDispatcher("/index.jsp").forward(request, response);
 		else
 			request.getRequestDispatcher(page).forward(request, response);
 	}
@@ -111,7 +106,7 @@ public class Controller extends HttpServlet {
 			
 			if (validatingMessage.equals("Successful") &&
 					userExists == true) {
-				loginRedirect(response, basePath, session, email);
+				loginForward(request, response, session, email);
 				return;
 			}
 
@@ -151,7 +146,7 @@ public class Controller extends HttpServlet {
 			if (validatingMessage.equals("Successful") &&
 					userExists == false) {
 				account.addUser(email, password);
-				loginRedirect(response, basePath, session, email);
+				loginForward(request, response, session, email);
 				return;
 			}
 
@@ -173,11 +168,11 @@ public class Controller extends HttpServlet {
 		request.getRequestDispatcher(page).forward(request, response);
 	}
 
-	private void loginRedirect(HttpServletResponse response, String basePath, HttpSession session, String email)
-			throws IOException {
+	private void loginForward(HttpServletRequest request, HttpServletResponse response, HttpSession session, String email)
+			throws IOException, ServletException {
 		session.setAttribute("email", email);
 		session.setMaxInactiveInterval(30);
-		response.sendRedirect(response.encodeURL(basePath));
+		request.getRequestDispatcher("/index.jsp").forward(request, response);
 	}
 
 }

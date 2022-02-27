@@ -3,10 +3,18 @@ package controller;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Test {
 
 	public static void main(String[] args) {
+		Map<String, String> map = new HashMap<>();
+		map.put("name", "James");
+		
+		System.out.println(map.get("name"));
+		System.out.println(map.get(null));
+		
 		try {
 			// Loading MSSQL-JDBC driver
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");

@@ -5,7 +5,7 @@
 	<div class="row justify-content-center">
 		<div class="col-6 border border-0 rounded border-primary px-5 py-3 bg-info p-2 text-white">
 			<form method="post"
-				action="<%=response.encodeURL(request.getContextPath() + "/Controller")%>">
+				action="<%=response.encodeURL(request.getContextPath() + "/app")%>">
 				<% if (request.getAttribute("validatingMessage") != null) { %>
 				<div class="row">
 					<p class="text-white"><%= request.getAttribute("validatingMessage") %></p>
